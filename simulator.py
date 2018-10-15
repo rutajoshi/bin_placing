@@ -26,6 +26,39 @@ def plot_coords(ax, ob, color):
     x, y = ob.xy
     ax.plot(x, y, 'o', color=color, zorder=1)
 
+class Square:
+    def __init__(self, side_length, transform):
+        self.side_length = side_length
+        self.transform = transform
+        self.rotation = transform[:2,:2]
+        self.translation = transform[:2,2]
+        bottom_left = (-side_length/2, -side_length/2)
+        top_left = (-side_length/2, side_length/2)
+        top_right = (side_length/2, side_length/2)
+        bottom_right = (side_length/2, -side_length/2)
+        ext = np.array([bottom_left, top_left, top_right, bottom_right, bottom_left])
+
+        # Apply the transform rotation
+        print("Transform = " + str(transform) + "\n")
+        rotation = transform[:2,:2]
+        translation = transform[:2,2]
+
+        print("Original = ")
+        print(ext)
+        print("\n")
+
+        ext = np.matmul(rotation, ext.T).T
+        print("Rotated = ")
+        print(ext)
+        print("\n")
+
+        ext += translation
+        print("Translation = " + str(translation))
+        print("Translated = ")
+        print(ext)
+        print("\n")
+
+        self.square = Polygon(ext)
 
 #### The actual code ####
 
@@ -61,36 +94,12 @@ def add_bin(fig, length, width):
 
     return ax
 
-def add_square(fig, transform, side_length, ax):
+
+def add_square2(fig, transform, side_length, ax):
     # Take the input transform (3x3) and put a fixed size square in that spot
     # Translation is from (0,0), and all transforms are applied to the center of the square
-    bottom_left = (-side_length/2, -side_length/2)
-    top_left = (-side_length/2, side_length/2)
-    top_right = (side_length/2, side_length/2)
-    bottom_right = (side_length/2, -side_length/2)
-    ext = np.array([bottom_left, top_left, top_right, bottom_right, bottom_left])
-
-    # Apply the transform rotation
-    print("Transform = " + str(transform) + "\n")
-    rotation = transform[:2,:2]
-    translation = transform[:2,2]
-
-    print("Original = ")
-    print(ext)
-    print("\n")
-
-    ext = np.matmul(rotation, ext.T).T
-    print("Rotated = ")
-    print(ext)
-    print("\n")
-
-    ext += translation
-    print("Translation = " + str(translation))
-    print("Translated = ")
-    print(ext)
-    print("\n")
-
-    polygon = Polygon(ext)
+    square = Square(side_length, transform)
+    polygon = square.square
     color = v_color(polygon)
 
     plot_coords(ax, polygon.exterior, color)
@@ -98,6 +107,24 @@ def add_square(fig, transform, side_length, ax):
     patch = PolygonPatch(polygon, facecolor=color, edgecolor=color, alpha=0.5, zorder=2)
     ax.add_patch(patch)
     return None
+
+def add_square(fig, ax, square):
+    polygon = square.square
+    color = v_color(polygon)
+
+    plot_coords(ax, polygon.exterior, color)
+
+    patch = PolygonPatch(polygon, facecolor=color, edgecolor=color, alpha=0.5, zorder=2)
+    ax.add_patch(patch)
+    return None
+
+def intersecting(sqA, sqB):
+    # If sqA and sqB intersect, returns the area of the intersection
+    # Otherwise returns 0
+    p1 = sqA.square
+    p2 = sq2.square
+    p3 = p1.intersects(p2)
+    return p3
 
 # Load the figure with just a bin, then with a bin and a square
 def main():
@@ -111,7 +138,9 @@ def main():
                             [np.sin(theta), np.cos(theta), translation[1]],
                             [0,0,0]])
     # add_square(fig, np.array([[1,0,0],[0,1,0],[0,0,0]]), 5, ax)
-    add_square(fig, transform, 5, ax)
+    # add_square(fig, transform, 5, ax)
+    square = Square(5, transform)
+    add_square(fig, ax, square)
     pyplot.show()
 
 if __name__ == "__main__": main()
