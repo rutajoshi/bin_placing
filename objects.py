@@ -1,4 +1,9 @@
-from utils import *
+# from utils import *
+from matplotlib import pyplot
+from shapely.geometry import Polygon
+from descartes.patch import PolygonPatch
+import math
+import numpy as np
 
 class PlacementObject:
     """
@@ -6,7 +11,7 @@ class PlacementObject:
     A placement object has, at minimum, a polygon, transform, and a type.
     The polygon is already transformed to be in the orientation specified by the transform from (0,0).
     """
-    def __init__(self, polygon, transform=np.eye(3), type):
+    def __init__(self, polygon, transform=np.eye(3), type="square"):
         self.polygon = polygon
         self.points = np.array(self.polygon.exterior.coords) # original, un-transformed points
         self.transform = transform

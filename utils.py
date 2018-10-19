@@ -1,8 +1,4 @@
-from matplotlib import pyplot
-from shapely.geometry import Polygon
-from descartes.patch import PolygonPatch
-import math
-import numpy as np
+from objects import *
 
 ENV_CREATED = False
 
@@ -26,7 +22,6 @@ def plot_coords(ax, ob, color):
 def create_env():
     # Create the figure for matplotlib to which you will add the objects
     fig = pyplot.figure(1, figsize=SIZE, dpi=90)
-    ENV_CREATED = True
     return fig
 
 def add_bin(fig, length, width):
@@ -71,28 +66,10 @@ def intersecting(objA, objB):
     # If objA and objB intersect, returns the area of the intersection
     # Otherwise returns 0
     p1 = objA.polygon
-    p2 = obj2.polygon
-    p3 = p1.intersects(p2)
-    return p3
+    p2 = objB.polygon
+    p3 = p1.intersection(p2)
+    return p3.area
 
 def display_env():
     # May be unnecessary
     pyplot.show()
-
-# def intersecting(sqA, sqB):
-#     # If sqA and sqB intersect, returns the area of the intersection
-#     # Otherwise returns 0
-#     p1 = sqA.square
-#     p2 = sq2.square
-#     p3 = p1.intersects(p2)
-#     return p3
-
-# def add_square(fig, ax, square):
-#     polygon = square.square
-#     color = v_color(polygon)
-#
-#     plot_coords(ax, polygon.exterior, color)
-#
-#     patch = PolygonPatch(polygon, facecolor=color, edgecolor=color, alpha=0.5, zorder=2)
-#     ax.add_patch(patch)
-#     return None
