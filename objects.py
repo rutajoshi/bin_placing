@@ -55,6 +55,8 @@ class PlacementObject:
 class Square(PlacementObject):
     def __init__(self, side_length, transform):
         self.side_length = side_length
+        self.length = side_length
+        self.width = side_length
         bottom_left = (-side_length/2, -side_length/2)
         top_left = (-side_length/2, side_length/2)
         top_right = (side_length/2, side_length/2)
