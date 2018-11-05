@@ -9,7 +9,7 @@ def main():
 
     # policy = RandomPolicy(bin.length, bin.width)
     policy = RowsPolicy(bin.length, bin.width)
-    first_object = Square(5, np.eye(3))
+    first_object = Square(6, np.eye(3))
     initial_state = State(bin, [], first_object)
     reward = Reward()
     transition = Transition(fig, ax)

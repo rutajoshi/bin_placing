@@ -29,12 +29,6 @@ def add_bin(fig, length, width):
     ax = fig.add_subplot(121)
     bin = Rectangle(length, width, np.eye(3))
     polygon = bin.polygon
-    # bottom_left = (-length/2, -width/2)
-    # top_left = (-length/2, width/2)
-    # top_right = (length/2, width/2)
-    # bottom_right = (length/2, -width/2)
-    # ext = [bottom_left, top_left, top_right, bottom_right, bottom_left]
-    # polygon = Polygon(ext)
 
     plot_coords(ax, polygon.exterior, '#999999')
 

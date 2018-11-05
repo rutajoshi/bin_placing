@@ -13,6 +13,7 @@ class RowsPolicy(Policy):
 
         # Go through all the objects already in the bin
         place_x = left_edge
+        place_y = self.next_y
         adjacent_y = self.old_y
 
         for obj in state.objects:
@@ -25,6 +26,9 @@ class RowsPolicy(Policy):
             if (smallest_y < self.old_y):
                 continue
 
+            if (biggest_y > place_y):
+                place_y = biggest_y
+
             # find the y value of the lowest point with biggest x in this object (bottom right corner)
             a = [list(i) for i in points if i[0] == biggest_x]
             right_bottom = np.min(a, axis=0)[1]
@@ -32,14 +36,14 @@ class RowsPolicy(Policy):
             if (biggest_x > place_x):
                 place_x = biggest_x   # biggest x seen so far in this row
                 adjacent_y = right_bottom
-                self.next_y = biggest_y
+                self.next_y = place_y
 
             # If there is no space in this row, because this object is too far to the right, then set stuff appropriately and break
             if (state.bin.length/2 - place_x < state.next_object.length):
                 place_x = left_edge
                 adjacent_y = self.next_y
                 self.old_y = self.next_y
-                self.next_y = biggest_y
+                self.next_y = place_y
                 break
 
         print("place_x = " + str(place_x))
