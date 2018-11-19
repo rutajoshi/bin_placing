@@ -11,6 +11,9 @@ class RowsPolicy(Policy):
         left_edge = -self.bin_length / 2
         bottom_edge = -self.bin_width / 2
 
+        # Get the bounding box of the next object
+        aabb = state.next_object.bounding_box()
+
         # Go through all the objects already in the bin
         place_x = left_edge
         place_y = self.next_y
@@ -39,7 +42,7 @@ class RowsPolicy(Policy):
                 self.next_y = place_y
 
             # If there is no space in this row, because this object is too far to the right, then set stuff appropriately and break
-            if (state.bin.length/2 - place_x < state.next_object.length):
+            if (state.bin.length/2 - place_x < aabb.length):
                 place_x = left_edge
                 adjacent_y = self.next_y
                 self.old_y = self.next_y
@@ -49,11 +52,11 @@ class RowsPolicy(Policy):
         print("place_x = " + str(place_x))
         print("adjacent_y = " + str(adjacent_y))
 
-        if (state.bin.length/2 - place_x >= state.next_object.length and \
-            state.bin.width/2 - adjacent_y >= state.next_object.width):
+        if (state.bin.length/2 - place_x >= aabb.length and \
+            state.bin.width/2 - adjacent_y >= aabb.width):
             # There is space for the next object in this row
-            transform = np.array([[1, 0, place_x + state.next_object.length/2],
-                                  [0, 1, adjacent_y + state.next_object.width/2],
+            transform = np.array([[1, 0, place_x + aabb.length/2],
+                                  [0, 1, adjacent_y + aabb.width/2],
                                   [0, 0, 1]])
             action = Action(transform, state.next_object)
             return action

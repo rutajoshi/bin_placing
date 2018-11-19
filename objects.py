@@ -23,7 +23,7 @@ class PlacementObject:
         ext += self.translation
         self.polygon = Polygon(ext)
 
-    def get_polygon(self, polygon):
+    def get_polygon(self):
         return self.polygon
 
     def get_type(self):
@@ -51,6 +51,21 @@ class PlacementObject:
         # Remember to update the stored transform. DO NOT update self.points
         new_transform = np.matmul(transform, self.transform)
         self.set_transform(new_transform)
+
+    def bounding_box(self):
+        points = np.array(self.polygon.exterior.coords)
+        biggest_x = np.max(points, axis=0)[0]   # biggest x among the points of this object
+        biggest_y = np.max(points, axis=0)[1]   # biggest x among the points of this object
+        smallest_x = np.min(points, axis=0)[0]  # smallest y seen among points of this object
+        smallest_y = np.min(points, axis=0)[1]  # smallest y seen among points of this object
+        length = biggest_x - smallest_x
+        width = biggest_y - smallest_y
+        bounds = [(smallest_x, smallest_y),(smallest_x, biggest_y),(biggest_x, biggest_y),(biggest_x, smallest_y)]
+        poly = Polygon(bounds)
+        obj = PlacementObject(poly)
+        obj.length = length
+        obj.width = width
+        return obj
 
 class Square(PlacementObject):
     def __init__(self, side_length, transform):

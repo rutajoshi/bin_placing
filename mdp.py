@@ -1,5 +1,43 @@
 from utils import *
 from objects import *
+from shapely.geometry import Point
+
+# def generate_random(number, polygon):
+#     list_of_points = []
+#     minx, miny, maxx, maxy = polygon.bounds
+#     counter = 0
+#     while counter < number:
+#         pnt = Point(np.random.uniform(minx, maxx), np.random.uniform(miny, maxy))
+#         if polygon.contains(pnt):
+#             list_of_points.append(list(pnt.coords)[0])
+#             counter += 1
+#     return list_of_points
+
+def smoothListGaussian(list,degree=5):
+     window=degree*2-1
+     weight=np.array([1.0]*window)
+     weightGauss=[]
+     for i in range(window):
+         i=i-degree+1
+         frac=i/float(window)
+         gauss=1/(np.exp((4*(frac))**2))
+         weightGauss.append(gauss)
+     weight=np.array(weightGauss)*weight
+     smoothed=[0.0]*(len(list)-window)
+     for i in range(len(smoothed)):
+         smoothed[i]=sum(np.array(list[i:i+window])*weight)/sum(weight)
+     return smoothed
+
+def generate_random(number, polygon):
+    minx, miny, maxx, maxy = polygon.bounds
+    theta = np.linspace(0, 2*np.pi, number, endpoint=False)
+    r = np.random.lognormal(0,1.5,number)
+    r = np.pad(r,(9,10),mode='wrap')
+    r = smoothListGaussian(r, degree=10)
+    coords = zip(np.cos(theta)*r, np.sin(theta)*r)
+    # coords = [i for i in coords if minx < i[0] < maxx and miny < i[1] < maxy]
+    # polygon = Polygon(coords)
+    return coords
 
 class State:
     def __init__(self, bin, objects, next_object):
@@ -44,7 +82,12 @@ class Transition:
         add_object(self.fig, self.ax, action.next_object)
         next_state.objects.append(action.next_object)
         # Pick a new next object
-        next_state.next_object = Square(5, np.eye(3))
+        # next_state.next_object = Square(5, np.eye(3))
+        number = np.random.randint(4,10)
+        random_object_pts = generate_random(number, Square(5, np.eye(3)).get_polygon())
+        print("\n\n" + str(random_object_pts) + "\n\n")
+        random_object = AbstractShape(random_object_pts, np.eye(3))
+        next_state.next_object = random_object
         return next_state
 
 class Termination:
