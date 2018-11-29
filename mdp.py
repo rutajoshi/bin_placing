@@ -83,11 +83,9 @@ class Transition:
         next_state.objects.append(action.next_object)
         # Pick a new next object
         # next_state.next_object = Square(5, np.eye(3))
-        number = np.random.randint(4,10)
-        random_object_pts = generate_random(number, Square(5, np.eye(3)).get_polygon())
-        print("\n\n" + str(random_object_pts) + "\n\n")
-        random_object = AbstractShape(random_object_pts, np.eye(3))
-        next_state.next_object = random_object
+        next_state.next_object = Rectangle.get_random(2, 10)
+        while (next_state.next_object.polygon.is_valid == False):
+            next_state.next_object = Rectangle.get_random(2, 10)
         return next_state
 
 class Termination:

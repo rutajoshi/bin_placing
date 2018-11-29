@@ -81,6 +81,17 @@ class Square(PlacementObject):
         polygon = Polygon(ext)
         super(Square, self).__init__(polygon, transform, "square")
 
+    @staticmethod
+    def get_random(min_side_length, max_side_length):
+        # Generates a random square with min and max side lengths specified
+        # Make it not and not translated from (0,0)
+        s = np.random.randint(min_side_length, max_side_length)
+        # theta = np.random.uniform(0, 2*np.pi)
+        # transform = np.array([[np.cos(theta), -np.sin(theta), 0],
+        #                       [np.sin(theta), np.cos(theta), 0],
+        #                       [0, 0, 1]])
+        return Square(s, np.eye(3))
+
 class Rectangle(PlacementObject):
     def __init__(self, length, width, transform):
         self.length = length
@@ -93,6 +104,18 @@ class Rectangle(PlacementObject):
 
         polygon = Polygon(ext)
         super(Rectangle, self).__init__(polygon, transform, "rectangle")
+
+    @staticmethod
+    def get_random(min_side_length, max_side_length):
+        # Generates a random rectange with min and max side lengths specified
+        # Make it randomly rotated but not translated from (0,0)
+        l = np.random.randint(min_side_length, max_side_length)
+        w = np.random.randint(min_side_length, max_side_length)
+        # theta = np.random.uniform(0, 2*np.pi)
+        # transform = np.array([[np.cos(theta), -np.sin(theta), 0],
+        #                       [np.sin(theta), np.cos(theta), 0],
+        #                       [0, 0, 1]])
+        return Rectangle(l, w, np.eye(3))
 
 class AbstractShape(PlacementObject):
     def __init__(self, points, transform):
