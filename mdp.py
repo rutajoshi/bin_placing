@@ -46,7 +46,11 @@ class State:
         self.next_object = next_object
 
     def copy(self):
-        new_state = State(self.bin, self.objects, self.next_object)
+        bin_copy = self.bin.copy()
+        obj_copy = [o for o in self.objects]
+        next_obj_copy = self.next_object.copy()
+        # new_state = State(self.bin, self.objects, self.next_object)
+        new_state = State(bin_copy, obj_copy, next_obj_copy)
         return new_state
 
 class Action:
@@ -76,10 +80,11 @@ class Transition:
         self.fig = fig
         self.ax = ax
 
-    def execute_action(self, state, action):
+    def execute_action(self, state, action, add_to_sim=True):
         next_state = state.copy()
         action.next_object.apply_transform(action.transform)
-        add_object(self.fig, self.ax, action.next_object)
+        if (add_to_sim):
+            add_object(self.fig, self.ax, action.next_object)
         next_state.objects.append(action.next_object)
         # Pick a new next object
         # next_state.next_object = Square(5, np.eye(3))
@@ -102,3 +107,7 @@ class Termination:
                     print("Object " + str(np.array(objA.polygon.exterior.coords)) + " intersects " + str(np.array(objB.polygon.exterior.coords)))
                     return True
         return False
+
+class Value:
+    def evaluate(self, state):
+        return 0

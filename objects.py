@@ -67,11 +67,15 @@ class PlacementObject:
         obj.width = width
         return obj
 
+    def copy(self):
+        return PlacementObject(self.polygon, self.transform, self.type)
+
 class Square(PlacementObject):
     def __init__(self, side_length, transform):
         self.side_length = side_length
         self.length = side_length
         self.width = side_length
+        self.area = side_length**2
         bottom_left = (-side_length/2, -side_length/2)
         top_left = (-side_length/2, side_length/2)
         top_right = (side_length/2, side_length/2)
@@ -96,6 +100,8 @@ class Rectangle(PlacementObject):
     def __init__(self, length, width, transform):
         self.length = length
         self.width = width
+        self.area = length * width
+        self.transform = transform
         bottom_left = (-length/2, -width/2)
         top_left = (-length/2, width/2)
         top_right = (length/2, width/2)
@@ -116,6 +122,9 @@ class Rectangle(PlacementObject):
         #                       [np.sin(theta), np.cos(theta), 0],
         #                       [0, 0, 1]])
         return Rectangle(l, w, np.eye(3))
+
+    def copy(self):
+        return Rectangle(self.length, self.width, self.transform)
 
 class AbstractShape(PlacementObject):
     def __init__(self, points, transform):
