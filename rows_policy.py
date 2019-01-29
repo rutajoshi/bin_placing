@@ -49,8 +49,8 @@ class RowsPolicy(Policy):
                 self.next_y = place_y
                 break
 
-        print("place_x = " + str(place_x))
-        print("adjacent_y = " + str(adjacent_y))
+        # print("place_x = " + str(place_x))
+        # print("adjacent_y = " + str(adjacent_y))
 
         if (state.bin.length/2 - place_x >= aabb.length and \
             state.bin.width/2 - adjacent_y >= aabb.width):

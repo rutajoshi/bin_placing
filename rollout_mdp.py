@@ -3,6 +3,7 @@ from random_policy import *
 from rows_policy import *
 from heatmap import *
 from area_reward import *
+from rows_reward import *
 
 # Load the figure with just a bin, then with a bin and a square
 def main():
@@ -16,7 +17,7 @@ def main():
     while (first_object.polygon.is_valid == False):
         first_object = Rectangle.get_random(2, 10)
     initial_state = State(bin, [], first_object)
-    reward = AreaReward()
+    reward = RowsReward()
     transition = Transition(fig, ax)
     termination = Termination()
 
@@ -25,7 +26,7 @@ def main():
     rewards = []
     state = initial_state
     while not termination.done(state):
-        heatmapper.generate(state, transition, reward, 6)
+        heatmapper.generate(state, transition, reward, 1)
         action = policy.get_action(state)
         next_state = transition.execute_action(state, action)
         print("\nPoints of placed object are = " + str(np.array(next_state.objects[-1].polygon.exterior.coords)) + "\n")

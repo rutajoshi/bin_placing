@@ -80,6 +80,20 @@ class Transition:
         self.fig = fig
         self.ax = ax
 
+    def try_transitioning(self, state, action, add_to_sim=True):
+        next_state = state.copy()
+        next_object = action.next_object.copy()
+        next_object.apply_transform(action.transform)
+        if (add_to_sim):
+            add_object(self.fig, self.ax, next_object)
+        next_state.objects.append(next_object)
+        # Pick a new next object
+        # next_state.next_object = Square(5, np.eye(3))
+        next_state.next_object = Rectangle.get_random(2, 10)
+        while (next_state.next_object.polygon.is_valid == False):
+            next_state.next_object = Rectangle.get_random(2, 10)
+        return next_state
+
     def execute_action(self, state, action, add_to_sim=True):
         next_state = state.copy()
         action.next_object.apply_transform(action.transform)

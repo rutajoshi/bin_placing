@@ -11,8 +11,10 @@ class HeatMap:
         aabb = state.next_object.bounding_box()
         for i in range(num_rotations):
             theta = i * (2*np.pi / num_rotations)
-            horiz = int(state.bin.length // aabb.length)
-            vert = int(state.bin.width // aabb.width)
+            # print("Bin length = " + str(state.bin.length) + "\nBin width = " + str(state.bin.width) + "\n")
+            # print("AABB length = " + str(aabb.length) + "\nAABB width = " + str(aabb.width) + "\n")
+            horiz = int(state.bin.length - aabb.length) #int(state.bin.length // aabb.length)
+            vert = int(state.bin.width - aabb.width) #int(state.bin.width // aabb.width)
             print("\nHoriz = " + str(horiz) + "\nVert = " + str(vert) + "\n")
             rewards = np.array([[1.0 for i in range(horiz)] for j in range(vert)])
 
@@ -22,10 +24,10 @@ class HeatMap:
                     transform = np.array([[np.cos(theta), -1*np.sin(theta), x],
                                           [np.sin(theta), np.cos(theta), y],
                                           [0, 0, 1]])
-                    action = Action(transform, state.next_object)
-                    next_state = transition.execute_action(state, action, add_to_sim=False)
+                    action = Action(transform, state.next_object.copy())
+                    next_state = transition.try_transitioning(state, action, add_to_sim=False)
                     r = reward.get_reward(state, action, next_state)
-                    print("\nr = " + str(r))
+                    # print("\nr = " + str(r))
                     rewards[y][x] = r
 
             print("\nRewards = " + str(rewards) + "\n")
