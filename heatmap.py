@@ -8,18 +8,23 @@ class HeatMap:
         # Generate a heat map and display it
 
         # Get bounding box of the state's next object
+        # TODO: get a non-axis-aligned bounding_box
         aabb = state.next_object.bounding_box()
+
         for i in range(num_rotations):
+            # Get rotation angle
             theta = i * (2*np.pi / num_rotations)
             # print("Bin length = " + str(state.bin.length) + "\nBin width = " + str(state.bin.width) + "\n")
             # print("AABB length = " + str(aabb.length) + "\nAABB width = " + str(aabb.width) + "\n")
-            horiz = int(state.bin.length - aabb.length) #int(state.bin.length // aabb.length)
-            vert = int(state.bin.width - aabb.width) #int(state.bin.width // aabb.width)
-            print("\nHoriz = " + str(horiz) + "\nVert = " + str(vert) + "\n")
-            rewards = np.array([[1.0 for i in range(horiz)] for j in range(vert)])
+            # horiz = int(state.bin.length - aabb.length) #int(state.bin.length // aabb.length)
+            # vert = int(state.bin.width - aabb.width) #int(state.bin.width // aabb.width)
+            # print("\nHoriz = " + str(horiz) + "\nVert = " + str(vert) + "\n")
+            # rewards = np.array([[1.0 for i in range(horiz)] for j in range(vert)])
 
-            for y in range(vert):
-                for x in range(horiz):
+            rewards = np.array([[1.0 for i in range(state.bin.length)] for j in range(state.bin.width)])
+
+            for y in range(state.bin.width):
+                for x in range(state.bin.length):
                     # Compute reward for an action that places the target object here
                     transform = np.array([[np.cos(theta), -1*np.sin(theta), x],
                                           [np.sin(theta), np.cos(theta), y],

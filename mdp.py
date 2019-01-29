@@ -2,17 +2,6 @@ from utils import *
 from objects import *
 from shapely.geometry import Point
 
-# def generate_random(number, polygon):
-#     list_of_points = []
-#     minx, miny, maxx, maxy = polygon.bounds
-#     counter = 0
-#     while counter < number:
-#         pnt = Point(np.random.uniform(minx, maxx), np.random.uniform(miny, maxy))
-#         if polygon.contains(pnt):
-#             list_of_points.append(list(pnt.coords)[0])
-#             counter += 1
-#     return list_of_points
-
 def smoothListGaussian(list,degree=5):
      window=degree*2-1
      weight=np.array([1.0]*window)
