@@ -62,6 +62,7 @@ def intersecting(objA, objB):
     p1 = objA.polygon
     p2 = objB.polygon
     p3 = p1.intersection(p2)
+    # import pdb;pdb.set_trace();
     return p3.area
 
 def display_env():

@@ -32,6 +32,7 @@ def main():
         print("\nPoints of placed object are = " + str(np.array(next_state.objects[-1].polygon.exterior.coords)) + "\n")
         rewards.append(reward.get_reward(state, action, next_state))
         state = next_state
+
     display_env()
 
 
