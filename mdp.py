@@ -87,13 +87,27 @@ class Transition:
         next_state = state.copy()
         action.next_object.apply_transform(action.transform)
         if (add_to_sim):
-            add_object(self.fig, self.ax, action.next_object.bounding_box())
+            oriented_bb = action.next_object.oriented_bounding_box()
+            bb_points = np.array(oriented_bb.polygon.exterior.coords)
+            print("obb points = " + str(bb_points) + "\n")
+            side = bb_points[1] - bb_points[0]
+            y_axis = np.array([0, 1])
+            theta = -1*np.arccos((np.dot(side, y_axis)) / (np.linalg.norm(side) * np.linalg.norm(y_axis)))
+            bb_rotation = np.array([[np.cos(theta), -np.sin(theta), 0],
+                                    [np.sin(theta), np.cos(theta), 0],
+                                    [0, 0, 1]])
+            oriented_bb.apply_transform(bb_rotation)
+            aabb = oriented_bb.bounding_box()
+
+            add_object(self.fig, self.ax, action.next_object)
+            # add_object(self.fig, self.ax, oriented_bb)
+            add_object(self.fig, self.ax, aabb)
         next_state.objects.append(action.next_object)
         # Pick a new next object
         # next_state.next_object = Square(5, np.eye(3))
-        next_state.next_object = PlacementObject.get_random()#Rectangle.get_random(2, 10)
+        next_state.next_object = PlacementObject.get_random()#Rectangle.get_random(2, 10) #
         while (next_state.next_object.polygon.is_valid == False):
-            next_state.next_object = PlacementObject.get_random() #Rectangle.get_random(2, 10)
+            next_state.next_object = PlacementObject.get_random() #Rectangle.get_random(2, 10) #
         return next_state
 
 class Termination:

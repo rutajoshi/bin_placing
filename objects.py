@@ -100,7 +100,7 @@ class PlacementObject:
     @staticmethod
     def get_random():
         number_of_vertices = np.random.randint(3, 8)
-        size_bound = np.random.randint(4, 8)
+        size_bound = np.random.randint(2, 10)
         bop = BagOfPoints.generate_random(number_of_vertices, size_bound)
         # Get the minimum area bounding box for this object and return it
         # shape = AbstractShape(bop.list_of_points, np.eye(3))

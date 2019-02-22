@@ -13,9 +13,9 @@ def main():
     # policy = RandomPolicy(bin.length, bin.width)
     policy = RowsPolicy(bin.length, bin.width)
     # first_object = Square(5, np.eye(3))
-    first_object = PlacementObject.get_random() #Rectangle.get_random(2, 10)
+    first_object = PlacementObject.get_random()#Rectangle.get_random(2, 10) #
     while (first_object.polygon.is_valid == False):
-        first_object = PlacementObject.get_random() #Rectangle.get_random(2, 10)
+        first_object = PlacementObject.get_random() #Rectangle.get_random(2, 10) #
     initial_state = State(bin, [], first_object)
     reward = RowsReward()
     transition = Transition(fig, ax)
@@ -26,10 +26,10 @@ def main():
     rewards = []
     state = initial_state
     while not termination.done(state):
-        heatmapper.generate(state, transition, reward, 1)
+        # heatmapper.generate(state, transition, reward, 1)
         action = policy.get_action(state)
         next_state = transition.execute_action(state, action)
-        print("\nPoints of placed object are = " + str(np.array(next_state.objects[-1].polygon.exterior.coords)) + "\n")
+        print("\nPoints of placed object are = " + str(np.array(next_state.objects[-1].bounding_box().polygon.exterior.coords)) + "\n")
         rewards.append(reward.get_reward(state, action, next_state))
         state = next_state
 
