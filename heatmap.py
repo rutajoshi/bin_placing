@@ -8,7 +8,7 @@ class HeatMap:
         # Generate a heat map and display it
 
         # Get bounding box of the state's next object
-        # TODO: get a non-axis-aligned bounding_box
+        # TODO: get a non-axis-aligned bounding_box in the policy.
         # obj_copy = state.next_object.copy()
         # aabb = state.next_object.bounding_box()
 

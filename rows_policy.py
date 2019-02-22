@@ -11,8 +11,21 @@ class RowsPolicy(Policy):
         left_edge = -self.bin_length / 2
         bottom_edge = -self.bin_width / 2
 
-        # Get the bounding box of the next object
+        # Get the oriented bounding box of the next object
         aabb = state.next_object.bounding_box()
+        # oriented_bb = state.next_object.oriented_bounding_box()
+
+        # Axis align the bounding box
+        # bb_points = np.array(oriented_bb.polygon.exterior.coords)
+        # side = bb_points[1] - bb_points[0]
+        # y_axis = np.array([0, 1])
+        # theta = np.arccos((np.dot(side, y_axis)) / (np.linalg.norm(side) * np.linalg.norm(y_axis)))
+        # bb_rotation = np.array([[np.cos(theta), -np.sin(theta), 0],
+        #                         [np.sin(theta), np.cos(theta), 0],
+        #                         [0, 0, 1]])
+        # oriented_bb.apply_transform(bb_rotation)
+        # aabb = oriented_bb.bounding_box()
+
 
         best_rotation = 0
 
@@ -62,6 +75,12 @@ class RowsPolicy(Policy):
         # print("adjacent_y = " + str(adjacent_y))
 
         if best_rotation != 0:
+            # rotation = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation)],
+            #                      [np.sin(best_rotation), np.cos(best_rotation)]])
+            # result = np.matmul(bb_rotation[:2,:2], rotation)
+            # transform = np.array([[result[0,0], result[0,1], place_x + aabb.width/2],
+            #                       [result[1,0], result[1,1], adjacent_y + aabb.length/2],
+            #                       [0, 0, 1]])
             transform = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation), place_x + aabb.width/2],
                                   [np.sin(best_rotation), np.cos(best_rotation), adjacent_y + aabb.length/2],
                                   [0, 0, 1]])
@@ -70,6 +89,12 @@ class RowsPolicy(Policy):
         elif (state.bin.length/2 - place_x >= aabb.length and \
             state.bin.width/2 - adjacent_y >= aabb.width):
             # There is space for the next object in this row
+            # rotation = np.array([[np.cos(best_rotation), -1 * np.sin(best_rotation)],
+            #                      [np.sin(best_rotation), np.cos(best_rotation)]])
+            # result = np.matmul(bb_rotation[:2, :2], rotation)
+            # transform = np.array([[result[0, 0], result[0, 1], place_x + aabb.length/2],
+            #                       [result[1, 0], result[1, 1], adjacent_y + aabb.width/2],
+            #                       [0, 0, 1]])
             transform = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation), place_x + aabb.length/2],
                                   [np.sin(best_rotation), np.cos(best_rotation), adjacent_y + aabb.width/2],
                                   [0, 0, 1]])
@@ -80,6 +105,7 @@ class RowsPolicy(Policy):
         theta = np.random.uniform(0, 2*np.pi)
         bin_length = state.bin.length
         bin_width = state.bin.width
+
         transform = np.array([[np.cos(theta), -1*np.sin(theta), np.random.uniform(-bin_length/2, bin_length/2)],
                               [np.sin(theta), np.cos(theta), np.random.uniform(-bin_width/2, bin_width/2)],
                               [0, 0, 1]])

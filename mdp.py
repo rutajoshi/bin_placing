@@ -2,31 +2,31 @@ from utils import *
 from objects import *
 from shapely.geometry import Point
 
-def smoothListGaussian(list,degree=5):
-     window=degree*2-1
-     weight=np.array([1.0]*window)
-     weightGauss=[]
-     for i in range(window):
-         i=i-degree+1
-         frac=i/float(window)
-         gauss=1/(np.exp((4*(frac))**2))
-         weightGauss.append(gauss)
-     weight=np.array(weightGauss)*weight
-     smoothed=[0.0]*(len(list)-window)
-     for i in range(len(smoothed)):
-         smoothed[i]=sum(np.array(list[i:i+window])*weight)/sum(weight)
-     return smoothed
-
-def generate_random(number, polygon):
-    minx, miny, maxx, maxy = polygon.bounds
-    theta = np.linspace(0, 2*np.pi, number, endpoint=False)
-    r = np.random.lognormal(0,1.5,number)
-    r = np.pad(r,(9,10),mode='wrap')
-    r = smoothListGaussian(r, degree=10)
-    coords = zip(np.cos(theta)*r, np.sin(theta)*r)
-    # coords = [i for i in coords if minx < i[0] < maxx and miny < i[1] < maxy]
-    # polygon = Polygon(coords)
-    return coords
+# def smoothListGaussian(list,degree=5):
+#      window=degree*2-1
+#      weight=np.array([1.0]*window)
+#      weightGauss=[]
+#      for i in range(window):
+#          i=i-degree+1
+#          frac=i/float(window)
+#          gauss=1/(np.exp((4*(frac))**2))
+#          weightGauss.append(gauss)
+#      weight=np.array(weightGauss)*weight
+#      smoothed=[0.0]*(len(list)-window)
+#      for i in range(len(smoothed)):
+#          smoothed[i]=sum(np.array(list[i:i+window])*weight)/sum(weight)
+#      return smoothed
+#
+# def generate_random(number, polygon):
+#     minx, miny, maxx, maxy = polygon.bounds
+#     theta = np.linspace(0, 2*np.pi, number, endpoint=False)
+#     r = np.random.lognormal(0,1.5,number)
+#     r = np.pad(r,(9,10),mode='wrap')
+#     r = smoothListGaussian(r, degree=10)
+#     coords = zip(np.cos(theta)*r, np.sin(theta)*r)
+#     # coords = [i for i in coords if minx < i[0] < maxx and miny < i[1] < maxy]
+#     # polygon = Polygon(coords)
+#     return coords
 
 class State:
     def __init__(self, bin, objects, next_object):
@@ -87,13 +87,13 @@ class Transition:
         next_state = state.copy()
         action.next_object.apply_transform(action.transform)
         if (add_to_sim):
-            add_object(self.fig, self.ax, action.next_object)
+            add_object(self.fig, self.ax, action.next_object.bounding_box())
         next_state.objects.append(action.next_object)
         # Pick a new next object
         # next_state.next_object = Square(5, np.eye(3))
-        next_state.next_object = Rectangle.get_random(2, 10)
+        next_state.next_object = PlacementObject.get_random()#Rectangle.get_random(2, 10)
         while (next_state.next_object.polygon.is_valid == False):
-            next_state.next_object = Rectangle.get_random(2, 10)
+            next_state.next_object = PlacementObject.get_random() #Rectangle.get_random(2, 10)
         return next_state
 
 class Termination:

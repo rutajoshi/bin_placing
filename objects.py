@@ -1,9 +1,31 @@
 # from utils import *
 from matplotlib import pyplot
 from shapely.geometry import Polygon
+from shapely.geometry import Point
 from descartes.patch import PolygonPatch
 import math
+import random
 import numpy as np
+
+
+class BagOfPoints:
+    def __init__(self, list_of_points):
+        self.list_of_points = list(list_of_points)
+
+    @staticmethod
+    def generate_random(number, bound):
+        list_of_pts = []
+        bounding_square = Square(bound, np.eye(3))
+        minx, miny = -bound, -bound
+        maxx, maxy = bound, bound
+        counter = 0
+        while counter < number:
+            pnt = (random.uniform(minx, maxx), random.uniform(miny, maxy))
+            if bounding_square.get_polygon().contains(Point(pnt)):
+                list_of_pts.append(pnt)
+                counter += 1
+        list_of_pts.append(list_of_pts[0])
+        return BagOfPoints(list_of_pts)
 
 class PlacementObject:
     """
@@ -67,8 +89,24 @@ class PlacementObject:
         obj.width = width
         return obj
 
+    def oriented_bounding_box(self):
+        rect_box_tilted = self.polygon.minimum_rotated_rectangle
+        obj = PlacementObject(rect_box_tilted)
+        return obj
+
     def copy(self):
         return PlacementObject(self.polygon, self.transform, self.type)
+
+    @staticmethod
+    def get_random():
+        number_of_vertices = np.random.randint(3, 8)
+        size_bound = np.random.randint(4, 8)
+        bop = BagOfPoints.generate_random(number_of_vertices, size_bound)
+        # Get the minimum area bounding box for this object and return it
+        # shape = AbstractShape(bop.list_of_points, np.eye(3))
+        base_polygon = Polygon(bop.list_of_points)
+        return PlacementObject(base_polygon, np.eye(3), "random")
+
 
 class Square(PlacementObject):
     def __init__(self, side_length, transform):
