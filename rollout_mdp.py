@@ -10,9 +10,7 @@ def main():
     fig = create_env()
     ax, bin = add_bin(fig, 20, 20)
 
-    # policy = RandomPolicy(bin.length, bin.width)
     policy = RowsPolicy(bin.length, bin.width)
-    # first_object = Square(5, np.eye(3))
     first_object = PlacementObject.get_random()#Rectangle.get_random(2, 10) #
     while (first_object.polygon.is_valid == False):
         first_object = PlacementObject.get_random() #Rectangle.get_random(2, 10) #

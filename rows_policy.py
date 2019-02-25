@@ -23,11 +23,13 @@ class RowsPolicy(Policy):
         bb_rotation = np.array([[np.cos(theta), -np.sin(theta), 0],
                                 [np.sin(theta), np.cos(theta), 0],
                                 [0, 0, 1]])
-        oriented_bb.apply_transform(bb_rotation)
-        aabb = oriented_bb.bounding_box()
-
+        obj_copy = state.next_object.copy()
+        obj_copy.apply_transform(bb_rotation)
+        # oriented_bb.apply_transform(bb_rotation)
+        aabb = obj_copy.bounding_box()
 
         best_rotation = 0
+        next_row = False
 
         # Go through all the objects already in the bin
         place_x = left_edge
@@ -38,15 +40,15 @@ class RowsPolicy(Policy):
         for obj in state.objects:
             points = np.array(obj.bounding_box().polygon.exterior.coords)
             # Get the bottom right corner of the polygon
-            biggest_x = np.max(points, axis=0)[0]   # biggest x among the points of this object
-            smallest_y = np.min(points, axis=0)[1]  # smallest y seen among points of this object
-            biggest_y = np.max(points, axis=0)[1] # get the top right corner's y-value too
+            biggest_x = np.max(points, axis=0)[0]   # biggest x among the points of this object (rightmost)
+            smallest_y = np.min(points, axis=0)[1]  # smallest y seen among points of this object (bottommost)
+            biggest_y = np.max(points, axis=0)[1] # get the top right corner's y-value too (topmost)
 
             # if this object is not in the current row, continue (skip it)
             if (smallest_y < self.old_y):
                 continue
 
-            # Update place_y, which holds the height of this row
+            # Update place_y, which holds the max height of any object in this row
             if (biggest_y > place_y):
                 place_y = biggest_y
 
@@ -64,55 +66,45 @@ class RowsPolicy(Policy):
             # Otherwise there is no space in the row, so set stuff to the next row
             if (state.bin.length/2 - place_x < aabb.length):
                 if (state.bin.length/2 - place_x < aabb.width):
+                    # object does not fit in this row. Start next row
                     place_x = left_edge
                     adjacent_y = self.next_y
                     self.old_y = self.next_y
-                    self.next_y = place_y
-                    break
+                    next_row = True
+                    # self.next_y = place_y
+                    break # Don't continue looking through objects in this bin if you can't fit in this row
                 else:
                     best_rotation = np.pi / 2
 
-        # print("place_x = " + str(place_x))
-        # print("adjacent_y = " + str(adjacent_y))
-
-        left_wiggle_room = 0
-        if (place_x == left_edge):
-            left_wiggle_room = 0.1
-        bottom_wiggle_room = 0
-        if (adjacent_y == bottom_edge):
-            bottom_wiggle_room = 0.1
 
         if (best_rotation != 0 and \
             state.bin.length/2 - place_x >= aabb.width and \
             state.bin.width/2 - adjacent_y >= aabb.length):
-            # rotation = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation)],
-            #                      [np.sin(best_rotation), np.cos(best_rotation)]])
-            # result = np.matmul(bb_rotation[:2,:2], rotation)
-            # transform = np.array([[result[0,0], result[0,1], place_x + aabb.width/2],
-            #                       [result[1,0], result[1,1], adjacent_y + aabb.length/2],
-            #                       [0, 0, 1]])
-
-            transform = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation), place_x + aabb.width/2 + left_wiggle_room],
-                                  [np.sin(best_rotation), np.cos(best_rotation), adjacent_y + aabb.length/2 + bottom_wiggle_room],
+            # There is space for the next object in this row, rotated
+            transform = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation), place_x + aabb.width/2],
+                                  [np.sin(best_rotation), np.cos(best_rotation), adjacent_y + aabb.length/2],
                                   [0, 0, 1]])
             action = Action(transform, state.next_object)
             return action
         elif (state.bin.length/2 - place_x >= aabb.length and \
             state.bin.width/2 - adjacent_y >= aabb.width):
-            # There is space for the next object in this row
-            # rotation = np.array([[np.cos(best_rotation), -1 * np.sin(best_rotation)],
-            #                      [np.sin(best_rotation), np.cos(best_rotation)]])
-            # result = np.matmul(bb_rotation[:2, :2], rotation)
-            # transform = np.array([[result[0, 0], result[0, 1], place_x + aabb.length/2],
-            #                       [result[1, 0], result[1, 1], adjacent_y + aabb.width/2],
-            #                       [0, 0, 1]])
-            transform = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation), place_x + aabb.length/2 + left_wiggle_room],
-                                  [np.sin(best_rotation), np.cos(best_rotation), adjacent_y + aabb.width/2 + bottom_wiggle_room],
+            # There is space for the next object in this row, NOT rotated
+            transform = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation), place_x + aabb.length/2],
+                                  [np.sin(best_rotation), np.cos(best_rotation), adjacent_y + aabb.width/2],
                                   [0, 0, 1]])
             action = Action(transform, state.next_object)
             return action
+        elif (next_row and \
+              state.bin.length / 2 - place_x >= aabb.width and \
+              state.bin.width / 2 - adjacent_y >= aabb.length):
+            # The object fits in the next row if you rotate it
+            transform = np.array([[np.cos(np.pi/2), -1 * np.sin(np.pi/2), place_x + aabb.width / 2],
+                                  [np.sin(np.pi/2), np.cos(np.pi/2), adjacent_y + aabb.length / 2],
+                                  [0, 0, 1]])
+            action = Action(transform, state.next_object)
 
         # When the bin is full, place object randomly
+        # This means the object doesn't fit in this row in either orientation, neither does it fit in the next row in either orientation
         theta = np.random.uniform(0, 2*np.pi)
         bin_length = state.bin.length
         bin_width = state.bin.width

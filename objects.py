@@ -20,7 +20,7 @@ class BagOfPoints:
         maxx, maxy = bound, bound
         counter = 0
         while counter < number:
-            pnt = (random.uniform(minx, maxx), random.uniform(miny, maxy))
+            pnt = (np.random.randint(minx, maxx), np.random.randint(miny, maxy))
             if bounding_square.get_polygon().contains(Point(pnt)):
                 list_of_pts.append(pnt)
                 counter += 1
@@ -102,6 +102,7 @@ class PlacementObject:
         number_of_vertices = np.random.randint(3, 8)
         size_bound = np.random.randint(2, 10)
         bop = BagOfPoints.generate_random(number_of_vertices, size_bound)
+        print("Random polygon has points = " + str(bop.list_of_points) + "\n")
         # Get the minimum area bounding box for this object and return it
         # shape = AbstractShape(bop.list_of_points, np.eye(3))
         base_polygon = Polygon(bop.list_of_points)
