@@ -1,5 +1,7 @@
 from utils import *
 from objects import *
+import math
+
 from shapely.geometry import Point
 
 # def smoothListGaussian(list,degree=5):
@@ -104,11 +106,13 @@ class Termination:
         # Also return True if any object is outside the bin
         for objA in state.objects:
             bin_contained = intersecting(objA, state.bin)
-            if (bin_contained < objA.polygon.area):
+            if (not math.isclose(bin_contained - objA.polygon.area, 0, abs_tol=0.0001)):
+            # if (bin_contained < objA.polygon.area):
                 print("Bin contained = " + str(bin_contained) + " < polygon area = " + str(objA.polygon.area))
                 return True
             for objB in [i for i in state.objects if i != objA]:
-                if intersecting(objA, objB) > 0:
+                if (not math.isclose(intersecting(objA, objB), 0, abs_tol=0.0001)):
+                # if intersecting(objA, objB) > 0:
                     print("Object " + str(np.array(objA.polygon.exterior.coords)) + " intersects " + str(np.array(objB.polygon.exterior.coords)))
                     return True
         return False

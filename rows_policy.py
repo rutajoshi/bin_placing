@@ -20,13 +20,21 @@ class RowsPolicy(Policy):
         side = bb_points[1] - bb_points[0]
         y_axis = np.array([0, 1])
         theta = np.arccos((np.dot(side, y_axis)) / (np.linalg.norm(side) * np.linalg.norm(y_axis)))
-        bb_rotation = np.array([[np.cos(theta), -np.sin(theta), 0],
-                                [np.sin(theta), np.cos(theta), 0],
+        bb_rotation = np.array([[np.cos(-theta), -np.sin(-theta), 0],
+                                [np.sin(-theta), np.cos(-theta), 0],
                                 [0, 0, 1]])
         obj_copy = state.next_object.copy()
         obj_copy.apply_transform(bb_rotation)
         # oriented_bb.apply_transform(bb_rotation)
         aabb = obj_copy.bounding_box()
+
+        # Translate bounding box so that it is centered at (0,0)
+        avgpt = np.mean(np.array(aabb.polygon.exterior.coords), axis=0)
+        move_to_center = np.array([[1, 0, -avgpt[0]],
+                                   [0, 1, -avgpt[1]],
+                                   [0, 0, 1]])
+        aabb.apply_transform(move_to_center)
+        new_avgpt = np.mean(np.array(aabb.polygon.exterior.coords), axis=0)
 
         best_rotation = 0
         next_row = False
@@ -84,7 +92,8 @@ class RowsPolicy(Policy):
             transform = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation), place_x + aabb.width/2],
                                   [np.sin(best_rotation), np.cos(best_rotation), adjacent_y + aabb.length/2],
                                   [0, 0, 1]])
-            action = Action(transform, state.next_object)
+            final_transform = np.matmul(transform, np.matmul(move_to_center, bb_rotation))
+            action = Action(final_transform, state.next_object)
             return action
         elif (state.bin.length/2 - place_x >= aabb.length and \
             state.bin.width/2 - adjacent_y >= aabb.width):
@@ -92,7 +101,8 @@ class RowsPolicy(Policy):
             transform = np.array([[np.cos(best_rotation), -1*np.sin(best_rotation), place_x + aabb.length/2],
                                   [np.sin(best_rotation), np.cos(best_rotation), adjacent_y + aabb.width/2],
                                   [0, 0, 1]])
-            action = Action(transform, state.next_object)
+            final_transform = np.matmul(transform, np.matmul(move_to_center, bb_rotation))
+            action = Action(final_transform, state.next_object)
             return action
         elif (next_row and \
               state.bin.length / 2 - place_x >= aabb.width and \
@@ -101,7 +111,8 @@ class RowsPolicy(Policy):
             transform = np.array([[np.cos(np.pi/2), -1 * np.sin(np.pi/2), place_x + aabb.width / 2],
                                   [np.sin(np.pi/2), np.cos(np.pi/2), adjacent_y + aabb.length / 2],
                                   [0, 0, 1]])
-            action = Action(transform, state.next_object)
+            final_transform = np.matmul(transform, np.matmul(move_to_center, bb_rotation))
+            action = Action(final_transform, state.next_object)
 
         # When the bin is full, place object randomly
         # This means the object doesn't fit in this row in either orientation, neither does it fit in the next row in either orientation
@@ -112,5 +123,6 @@ class RowsPolicy(Policy):
         transform = np.array([[np.cos(theta), -1*np.sin(theta), np.random.uniform(-bin_length/2, bin_length/2)],
                               [np.sin(theta), np.cos(theta), np.random.uniform(-bin_width/2, bin_width/2)],
                               [0, 0, 1]])
-        action = Action(transform, state.next_object)
+        final_transform = np.matmul(transform, np.matmul(move_to_center, bb_rotation))
+        action = Action(final_transform, state.next_object)
         return action
