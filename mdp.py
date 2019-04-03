@@ -89,8 +89,8 @@ class Transition:
         next_state = state.copy()
         action.next_object.apply_transform(action.transform)
         if (add_to_sim):
-            # add_object(self.fig, self.ax, action.next_object)
-            add_object(self.fig, self.ax, action.next_object.bounding_box())
+            add_object(self.fig, self.ax, action.next_object)
+            # add_object(self.fig, self.ax, action.next_object.bounding_box())
 
         next_state.objects.append(action.next_object)
         # Pick a new next object
