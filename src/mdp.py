@@ -36,6 +36,7 @@ class State:
     1) a bin
     2) a list of objects
     3) an object which will be placed next
+    
     """
 
     def __init__(self, bin, objects, next_object):
@@ -84,6 +85,7 @@ class Action:
     1) a transform from origin in world space coordinates (3x3 translation
        and rotation matrix)
     2) a next object to be placed using the transform
+
     """
 
     def __init__(self, transform, next_object):
@@ -112,6 +114,7 @@ class Policy:
     A bin placing policy contains:
     1) a bin length
     2) a bin width
+
     """
 
     def __init__(self, bin_length, bin_width):
@@ -158,6 +161,7 @@ class Reward:
     """This is a parent class for reward functions for the bin placing project.
     A bin placing reward contains only a function that returns the evaluation of
     the reward function given state, action, and next_state.
+
     """
 
     def get_reward(self, state, action, next_state):
@@ -190,6 +194,7 @@ class Transition:
     A bin placing transition contains:
     1) a figure for the environment
     2) axes for the bin
+
     """
 
     def __init__(self, fig, ax):
@@ -283,6 +288,7 @@ class Termination:
     """This is a representation of termination states for the bin placing project.
     A bin placing termination contains only a function done() which takes in a state
     and decides whether we are finished with the placement task.
+
     """
 
     def done(self, state):
@@ -319,6 +325,7 @@ class Value:
     A bin placing value function contains only a function evaluate() which takes
     in a state and determines its value. This may be useful for Q-learning or
     value iteration in the future.
+
     """
 
     def evaluate(self, state):
