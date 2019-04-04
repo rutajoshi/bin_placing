@@ -1,11 +1,28 @@
 from simulator import *
 
 def createEnvFromUserInput(bin_size):
+    """Given a bin size, create an environment.
+
+    Parameters
+    ----------
+    bin_size : int
+        Side length of a square bin
+
+    Returns
+    -------
+    fig : matplotlib.pyplot.Figure
+        Figure used to display the bin and objects
+    ax  : an matplotlib.axes.SubplotBase subclass of Axes (or a subclass of Axes)
+        The axes of the subplot corresponding to the bin
+    """
     fig = create_env()
     ax = add_bin(fig, bin_size, bin_size)
     return fig, ax
 
 def main():
+    """Main method to interact with the user and retrieve bin creation parameters,
+    number of objects, etc.
+    """
     bin_size = eval(input("Enter the side length of the bin (5 to 30 inclusive): "))
     while (bin_size < 5 or bin_size > 30):
         bin_size = eval(input("Try again. Enter the side length of the bin (5 to 30 inclusive): "))

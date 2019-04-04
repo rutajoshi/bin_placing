@@ -1,7 +1,29 @@
 from mdp import *
 
 class AreaReward(Reward):
+    """This is a reward function based on the area of the bin covered by objects
+    placed in the bin. The returned reward is the fraction of the total bin area
+    currently covered by objects that have been placed.
+    """
+    
     def get_reward(self, state, action, next_state):
+        """Returns area-based reward given state, action, and resulting next state.
+
+        Parameters
+        ----------
+        state       : State
+            Starting state
+        action      : Action
+            Action given by policy
+        next_state  : State
+            State resulting from applying action to state
+
+        Returns
+        -------
+        float
+            The fraction of bin area covered by objects already in the bin.
+
+        """
         bin_area = state.bin.area
         old_objects_area, new_objects_area = 0, 0
         for obj in state.objects:

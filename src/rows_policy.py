@@ -1,12 +1,48 @@
 from mdp import *
 
 class RowsPolicy(Policy):
+    """This is a policy that places an object in the next available spot when
+    objects are being placed in rows across the bin, from bottom to top along
+    the y-axis.
+    """
+
     def __init__(self, bin_length, bin_width):
+        """Returns an instance of the RowsPolicy given bin dimensions.
+
+        Parameters
+        ----------
+        bin_length  : int
+            Bin length dimension (x)
+        bin_width   : int
+            Bin width dimension (y)
+
+        Returns
+        -------
+        RowsPolicy
+            An instance of RowsPolicy with the above parameters
+
+        """
         super(RowsPolicy, self).__init__(bin_width, bin_length)
         self.next_y = -self.bin_width / 2
         self.old_y = -self.bin_width / 2
 
     def get_action(self, state):
+        """Returns an action by discovering the current placement of objects in
+        the bin already and finding the next available placement location. Given
+        an object at its initial location, this method tests the object rotated at
+        0 radians and pi radians before picking the optimal rotation. 
+
+        Parameters
+        ----------
+        state       : State
+            Starting state
+
+        Returns
+        -------
+        action      : Action
+            An action to take from this state.
+
+        """
         # Get the bin
         left_edge = -self.bin_length / 2
         bottom_edge = -self.bin_width / 2

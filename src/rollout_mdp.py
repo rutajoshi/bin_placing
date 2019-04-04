@@ -7,6 +7,11 @@ from rows_reward import *
 
 # Load the figure with just a bin, then with a bin and a square
 def main():
+    """This function is the driving function of the bin_packing 2D simulator module.
+    It initializes an environment with an initial state and rolls out a policy until
+    a termination state is reached.
+    """
+    
     fig = create_env()
     ax, bin = add_bin(fig, 20, 20)
 

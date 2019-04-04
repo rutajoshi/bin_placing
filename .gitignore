@@ -2,3 +2,4 @@ __pycache__/
 simenv/
 .idea/
 *.pyc
+.DS_Store

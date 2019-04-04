@@ -4,14 +4,37 @@ from mdp import *
 import matplotlib.pyplot as plt
 
 class HeatMap:
+    """This is a class to generate a heat map given a state, transition, reward
+    function, and a number of rotations. It rotates an object and generates actions
+    which are placement transforms across a grid overlaid on the bin. It then
+    evaluates the reward function at each of these and creates a heatmap out of
+    the rewards.
+    """
     def generate(self, state, transition, reward, num_rotations):
-        # Generate a heat map and display it
+        """Generates a heat map of rewards:
+        1) Divide the bin area to get a grid of locations
+        2) For each of n rotations of the object, generate a heatmap and display it
 
-        # Get bounding box of the state's next object
-        # TODO: get a non-axis-aligned bounding_box in the policy.
-        # obj_copy = state.next_object.copy()
-        # aabb = state.next_object.bounding_box()
+        3) Go through all possible actions and evaluate reward function
+        4) Put these into a matrix and plot it as a heat map
 
+        Parameters
+        ----------
+        state           : State
+            Starting state
+        transition      : Transition
+            Transition object for applying actions tested in this method
+        reward          : Reward
+            Reward function used to generate heatmap
+        num_rotations   : int
+            Number of rotations of the target object to consider
+
+        Returns
+        -------
+        None
+            Nothing is returned. A heatmap is displayed.
+
+        """
         for i in range(num_rotations):
             # Get rotation angle
             theta = i * (2*np.pi / num_rotations)
@@ -35,8 +58,3 @@ class HeatMap:
             print("\nRewards = " + str(rewards) + "\n")
             plt.imshow(rewards, cmap='hot', interpolation='nearest')
             plt.show()
-        # Divide the bin area to get a grid of locations
-        # For each of n rotations of the object, generate a heatmap and display it
-
-        # Go through all possible actions and evaluate reward function
-        # Put these into a matrix and plot it as a heat map
