@@ -1,4 +1,4 @@
-from simulator import *
+from utils import *
 
 def createEnvFromUserInput(bin_size):
     """Given a bin size, create an environment.
