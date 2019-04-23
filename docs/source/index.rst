@@ -8,9 +8,7 @@ for computational geometry applications.
 
 To run, first create a virtual environment using the requirements from requirements.txt.
 Then, source your virtual environment and run
-```
-python3 rollout_mdp.py
-```
+`python3 rollout_mdp.py`
 from the root directory. This should spin up a matplotlib plot with a square bin.
 
 Please contact rjoshi@berkeley.edu if you have any questions.
